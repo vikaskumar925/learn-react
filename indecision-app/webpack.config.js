@@ -14,4 +14,8 @@ module.exports ={
             exclude :/node_mdoules/,
         }],
     },
+    devtool:'cheap-module-eval-source-map',
+    devServer : {
+        contentBase:path.join(__dirname, 'public'),
+    }
 };
