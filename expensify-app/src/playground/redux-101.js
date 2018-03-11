@@ -1,54 +1,67 @@
 import { createStore } from 'redux';
 
-const store =  createStore((state = {count:0 }, action) => {
-    switch(action.type){
-        case "INCREMENT":
-            const incrementBy = (typeof action.incrementBy === "number") ? incrementBy : 1;
-            return {
-                count:state.count + incrementBy,
-            };
-        case "DECREMENT":
-            const decrementBy =  (typeof action.decrementBy === "number") ? decrementBy :1;
-            return {
-                count:state.count - decrementBy ,
-            };
-        case "RESET":
-            return {
-                count:0,
-            };
-        case "SET":
-            return {
-                count:action.count,
-            };
-        default:
-            return state;
-    }
+//Action Generators - function that return action objects
 
+const incrementCount = ({ incrementBy = 1 } = {}) => ({
+    type:"INCREMENT",
+    incrementBy,
 });
+
+const decrementCount = ({ decrementBy = 1 } = {}) => ({
+    type:"DECREMENT",
+    decrementBy,
+});
+const setCount = ({ count }) => ({
+    type:"SET",
+    count,
+});
+const resetCount = () => ({
+    type:"RESET",
+});
+
+// Reducers
+//Reducers are pure function
+//Never change state or action
+
+const countReducer  =(
+    state = { count:0 }, action) => {
+        switch(action.type){
+            case "INCREMENT":
+                return {
+                    count:state.count + action.incrementBy,
+                };
+            case "DECREMENT":
+                return {
+                    count:state.count - action.decrementBy ,
+                };
+            case "RESET":
+                return {
+                    count:0,
+                };
+            case "SET":
+                return {
+                    count:action.count,
+                };
+            default:
+                return state;
+        }
+
+    };
+const store =  createStore(countReducer);
 const unsubscibe = store.subscribe(() => {
     console.log(store.getState());
 });
 
 
-store.dispatch({
-    type:'INCREMENT',
-    incrementBy:5,
-});
-
-store.dispatch({
-    type:'INCREMENT',
-});
-
 // store.dispatch({
-//     type:"RESET",
+//     type:'INCREMENT',
+//     incrementBy:5,
 // });
-store.dispatch({
-    type:'DECREMENT',
-    decrementBy:10,
-});
-store.dispatch({
-    type:'SET',
-    count:101,
-});
+store.dispatch(incrementCount({ incrementBy:5 }))
+store.dispatch(incrementCount());
 
-console.log(store.getState());
+store.dispatch(decrementCount());
+store.dispatch(decrementCount({ decrementBy:10 }));
+
+store.dispatch(resetCount());
+store.dispatch(setCount({ count : -1000, }));
